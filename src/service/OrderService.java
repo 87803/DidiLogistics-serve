@@ -16,4 +16,6 @@ public interface OrderService {
     OrderDetailVo getOrderDetail(String orderId);
 
     boolean updateOrderState(String orderId, int userId, String state, boolean userType);
+
+    boolean pushOrder(String orderId, int driverId);
 }

@@ -71,8 +71,14 @@ public class OrderServlet extends HttpServlet {
                 else
                     ResponseUtils.responseJson(400, "结束行程失败", response);
                 break;
+            case 5://向司机推送订单
+                if (orderService.pushOrder(orderID, postData.getInteger("driverID")))
+                    ResponseUtils.responseJson(200, "推送订单成功", response);
+                else
+                    ResponseUtils.responseJson(400, "推送订单失败", response);
+                break;
             default:
-                ResponseUtils.responseJson(400, "参数错误", response);
+                ResponseUtils.responseJson(500, "参数错误，非法的请求", response);
         }
     }
 }

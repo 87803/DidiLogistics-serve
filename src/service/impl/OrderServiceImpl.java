@@ -1,10 +1,13 @@
 package service.impl;
 
 import dao.OrderDao;
+import dao.UserDao;
 import dao.impl.OrderDaoImpl;
+import dao.impl.UserDaoImpl;
 import domain.DemandVo;
 import domain.OrderDetailVo;
 import domain.PostDemandVo;
+import domain.User;
 import service.MessageService;
 import service.OrderService;
 import util.MessageEnum;
@@ -14,6 +17,7 @@ import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
     OrderDao orderDao = new OrderDaoImpl();
+    UserDao userDao = new UserDaoImpl();
     MessageService messageService = new MessageServiceImpl();
 
     @Override
@@ -70,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (state.equals("进行中") && curState.equals("已接单") && userType) {//开始行程
             if (orderDao.updateOrderStateByDriver(orderId, userId, state)) {
                 ownerMessage = MessageEnum.START_ORDER;
-                driverMessage = MessageFormat.format(MessageEnum.START_ORDER_DRIVER, orderDetailVo.getDescription(), orderDetailVo.getDesPlaceProvince() + "省" + orderDetailVo.getDesPlaceCity() + "市" + orderDetailVo.getDesPlaceDistrict() + "区");
+                driverMessage = MessageFormat.format(MessageEnum.START_ORDER_DRIVER, orderDetailVo.getDescription(), orderDetailVo.getDesPlaceProvince() + orderDetailVo.getDesPlaceCity() + orderDetailVo.getDesPlaceDistrict());
                 opResult = true;
             }
         } else if (state.equals("待支付") && curState.equals("进行中") && userType) {//司机送达货物
@@ -92,6 +96,22 @@ public class OrderServiceImpl implements OrderService {
             messageService.createNewMessage(driverId, orderId, driverMessage);
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean pushOrder(String orderId, int driverId) {
+        OrderDetailVo orderDetailVo = orderDao.findOrderDetailByOrderId(orderId);
+        User driver = userDao.findUserByID(driverId);
+        if (messageService.createNewMessage(driverId, orderId, MessageFormat.format(MessageEnum.PUSH_ORDER_DRIVER,
+                orderDetailVo.getOwnerName(),
+                orderDetailVo.getDescription(),
+                orderDetailVo.getStartPlaceProvince() + orderDetailVo.getStartPlaceCity() + orderDetailVo.getStartPlaceDistrict(),
+                orderDetailVo.getDesPlaceProvince() + orderDetailVo.getDesPlaceCity() + orderDetailVo.getDesPlaceDistrict()))) {
+            messageService.createNewMessage(Integer.parseInt(orderDetailVo.getOwnerID()), orderId, MessageFormat.format(MessageEnum.PUSH_ORDER, driver.getName()));
+            return true;
+        }
+
         return false;
     }
 }

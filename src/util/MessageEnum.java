@@ -11,4 +11,6 @@ public class MessageEnum {
     public static final String FINISH_ORDER_DRIVER = "订单已完成，系统已通知货主进行支付";
     public static final String PAY_ORDER = "订单已完成支付，感谢您的使用";
     public static final String PAY_ORDER_DRIVER = "订单已完成支付，{0}元已入账，感谢您的使用";
+    public static final String PUSH_ORDER = "您已向司机 {0} 推送了该笔订单，等待司机接单";
+    public static final String PUSH_ORDER_DRIVER = "货主 {0} 向你推送了一个订单，货物内容：{1}，由 {2} 发往 {3}，请尽快查看";
 }
