@@ -56,8 +56,10 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<DemandVo> findDemandByUserId(int userId) {
+    public List<DemandVo> findDemandByUserId(int userId, boolean userType) {
         String sql = "select * from `order` where owner_id = ? order by order_time desc";
+        if (userType)
+            sql = "select * from `order` where driver_id = ? order by order_time desc";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -122,6 +124,8 @@ public class OrderDaoImpl implements OrderDao {
             OrderDetailVo orderDetailVo = new OrderDetailVo();
             if (resultSet.next()) {
                 orderDetailVo.setOrderID(resultSet.getString("order_id"));
+                orderDetailVo.setOwnerID(String.valueOf(resultSet.getInt("owner_id")));
+                orderDetailVo.setDriverID(String.valueOf(resultSet.getInt("driver_id")));
                 orderDetailVo.setDeliverTime(resultSet.getDate("deliver_time").toString());
                 orderDetailVo.setDescription(resultSet.getString("description"));
                 orderDetailVo.setPrice(String.valueOf(resultSet.getInt("price")));
@@ -159,6 +163,81 @@ public class OrderDaoImpl implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public String findOrderStateByOrderId(String orderId) {
+        String sql = "select state from `order` where order_id = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, orderId);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("state");
+            }
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean updateOrderStateByUser(String orderId, int userId, String state) {
+        String sql = "update `order` set state = ? where order_id = ? and owner_id = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setString(2, orderId);
+            ps.setInt(3, userId);
+            int i = ps.executeUpdate();
+            if (i == 1) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateOrderStateAndDriverByUser(String orderId, int ownerId, int driverId, String state) {
+        String sql = "update `order` set state = ?,driver_id=? where order_id = ? and owner_id = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setInt(2, driverId);
+            ps.setString(3, orderId);
+            ps.setInt(4, ownerId);
+            int i = ps.executeUpdate();
+            if (i == 1) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateOrderStateByDriver(String orderId, int userId, String state) {
+        String sql = "update `order` set state = ? where order_id = ? and driver_id = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setString(2, orderId);
+            ps.setInt(3, userId);
+            int i = ps.executeUpdate();
+            if (i == 1) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

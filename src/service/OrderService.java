@@ -9,9 +9,11 @@ import java.util.List;
 public interface OrderService {
     boolean createOrder(PostDemandVo postDemandVo);
 
-    List<DemandVo> getAllOrder(int userId);
+    List<DemandVo> getAllOrder(int userId, boolean userType);
 
     List<DemandVo> getOrderByState(String state);
 
     OrderDetailVo getOrderDetail(String orderId);
+
+    boolean updateOrderState(String orderId, int userId, String state, boolean userType);
 }

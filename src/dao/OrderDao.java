@@ -11,9 +11,17 @@ public interface OrderDao {
     boolean insertNewOrder(PostDemandVo postDemandVo);
 
     //根据用户id查询订单
-    List<DemandVo> findDemandByUserId(int userId);
+    List<DemandVo> findDemandByUserId(int userId, boolean userType);
 
     List<DemandVo> findDemandByState(String state);
 
     OrderDetailVo findOrderDetailByOrderId(String orderId);
+
+    String findOrderStateByOrderId(String orderId);
+
+    boolean updateOrderStateByUser(String orderId, int userId, String state);
+
+    boolean updateOrderStateAndDriverByUser(String orderId, int ownerId, int driverId, String state);
+
+    boolean updateOrderStateByDriver(String orderId, int userId, String state);
 }

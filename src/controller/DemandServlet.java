@@ -29,9 +29,13 @@ public class DemandServlet extends HttpServlet {
         String type = decodedJWT.getClaim("type").asString();
         List<DemandVo> data;
         if (type.equals("0")) {//货主只能取到自己的订单
-            data = orderService.getAllOrder(Integer.parseInt(userID));
+            data = orderService.getAllOrder(Integer.parseInt(userID), false);
         } else {
-            data = orderService.getOrderByState("待接单");
+            String order = request.getParameter("order");
+            if (order != null && order.equals("true"))
+                data = orderService.getAllOrder(Integer.parseInt(userID), true);
+            else
+                data = orderService.getOrderByState("待接单");
         }
         ResponseUtils.responseJson(200, "获取订单列表成功", data, response);
     }
