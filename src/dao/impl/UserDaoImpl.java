@@ -47,6 +47,7 @@ public class UserDaoImpl implements UserDao {
                 user.setCarWeight(resultSet.getDouble("car_weight"));
                 user.setCarLength(resultSet.getDouble("car_length"));
                 user.setState(resultSet.getBoolean("state"));
+                user.setIncome(resultSet.getInt("income"));
                 return user;
             }
         } catch (SQLException e) {
@@ -75,6 +76,7 @@ public class UserDaoImpl implements UserDao {
                 user.setCarWeight(resultSet.getDouble("car_weight"));
                 user.setCarLength(resultSet.getDouble("car_length"));
                 user.setState(resultSet.getBoolean("state"));
+                user.setIncome(resultSet.getInt("income"));
                 return user;
             }
         } catch (SQLException e) {

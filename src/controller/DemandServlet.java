@@ -31,11 +31,15 @@ public class DemandServlet extends HttpServlet {
         if (type.equals("0")) {//货主只能取到自己的订单
             data = orderService.getAllOrder(Integer.parseInt(userID), false);
         } else {
-            String order = request.getParameter("order");
+            String order = request.getParameter("order");   //这是获取司机自己的订单
             if (order != null && order.equals("true"))
                 data = orderService.getAllOrder(Integer.parseInt(userID), true);
-            else
-                data = orderService.getOrderByState("待接单");
+            else    //这是获取所有需求
+            {
+                String start = request.getParameter("start");
+                String end = request.getParameter("end");
+                data = orderService.getOrderByUserIDStartEnd(Integer.parseInt(userID), start, end);
+            }
         }
         ResponseUtils.responseJson(200, "获取订单列表成功", data, response);
     }
@@ -49,8 +53,8 @@ public class DemandServlet extends HttpServlet {
 //        decodedJWT.getClaim("phone");
         DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
         postDemandVo.setOwnerID(Integer.parseInt(decodedJWT.getClaim("userID").asString()));
-        System.out.println(postDemandVo);
-        System.out.println(jsonStr);
+//        System.out.println(postDemandVo);
+//        System.out.println(jsonStr);
         if (orderService.createOrder(postDemandVo))
             ResponseUtils.responseJson(200, "创建订单成功", response);
         else

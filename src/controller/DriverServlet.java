@@ -1,8 +1,10 @@
 package controller;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import domain.DriverVo;
 import service.DriverService;
 import service.impl.DriverServiceImpl;
+import util.JWTUtils;
 import util.ResponseUtils;
 
 import javax.servlet.annotation.WebServlet;
@@ -17,10 +19,12 @@ public class DriverServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-//        String token = request.getHeader("token");
-//        DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
-//        String userID = decodedJWT.getClaim("userID").asString();
-        List<DriverVo> data = driverService.getDriverByState(true);
+        String token = request.getHeader("token");
+        DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
+        String start = request.getParameter("start");
+        String end = request.getParameter("end");
+        int userID = Integer.parseInt(decodedJWT.getClaim("userID").asString());
+        List<DriverVo> data = driverService.getOnlineDriverByUserIDStartEnd(userID, start, end);
         ResponseUtils.responseJson(200, "获取司机列表成功", data, response);
     }
 

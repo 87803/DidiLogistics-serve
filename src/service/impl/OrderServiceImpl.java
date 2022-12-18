@@ -1,7 +1,9 @@
 package service.impl;
 
+import dao.DriverDao;
 import dao.OrderDao;
 import dao.UserDao;
+import dao.impl.DriverDaoImpl;
 import dao.impl.OrderDaoImpl;
 import dao.impl.UserDaoImpl;
 import domain.DemandVo;
@@ -18,6 +20,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     OrderDao orderDao = new OrderDaoImpl();
     UserDao userDao = new UserDaoImpl();
+    DriverDao driverDao = new DriverDaoImpl();
     MessageService messageService = new MessageServiceImpl();
 
     @Override
@@ -88,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
                 ownerMessage = MessageEnum.PAY_ORDER;
                 driverMessage = MessageFormat.format(MessageEnum.PAY_ORDER_DRIVER, orderDetailVo.getPrice());
                 opResult = true;
+                driverDao.updateDriverIncome(driverId, Integer.parseInt(orderDetailVo.getPrice())); //更新司机收入
             }
         }
 
@@ -113,5 +117,22 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return false;
+    }
+
+    @Override
+    public List<DemandVo> getOrderByUserIDStartEnd(int userID, String start, String end) {
+        User user = userDao.findUserByID(userID);
+
+        double len = user.getCarLength();
+        double wei = user.getCarWeight();
+        if (start.equals("null") && end.equals("null")) {
+            return orderDao.findDemandByStateLenWei("待接单", len, wei);
+        } else if (start.equals("null")) {
+            return orderDao.findDemandByStateLenWeiEnd("待接单", len, wei, end);
+        } else if (end.equals("null")) {
+            return orderDao.findDemandByStateLenWeiStart("待接单", len, wei, start);
+        } else {
+            return orderDao.findDemandByStateLenWeiStartEnd("待接单", len, wei, start, end);
+        }
     }
 }

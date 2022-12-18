@@ -18,4 +18,6 @@ public interface OrderService {
     boolean updateOrderState(String orderId, int userId, String state, boolean userType);
 
     boolean pushOrder(String orderId, int driverId);
+
+    List<DemandVo> getOrderByUserIDStartEnd(int userID, String start, String end);
 }

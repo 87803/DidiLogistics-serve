@@ -19,7 +19,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public boolean insertNewOrder(PostDemandVo postDemandVo) {
         String sql = "INSERT INTO `order`(`start_place_province`, `start_place_city`, `start_place_district`,`des_place_province`," +
-                "`des_place_city`,`des_place_district`,`deliver_time`,`length`,`weight`,`price`,`owner_id`,`description`, `order_id`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "`des_place_city`,`des_place_district`,`deliver_time`,`length`,`weight`,`price`,`owner_id`,`description`, `order_id`, `des_place_detail`, `start_place_detail`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setString(1, postDemandVo.getStartPlaceProvince());
@@ -30,6 +30,9 @@ public class OrderDaoImpl implements OrderDao {
             ps.setString(6, postDemandVo.getDesPlaceDistrict());
             try {
                 java.util.Date date = new SimpleDateFormat("yyyy/MM/dd").parse(postDemandVo.getDeliverTime());
+                if (date.compareTo(new Date(new Date().getTime() - 24 * 60 * 60 * 1000)) < 0) {   //如果日期小于当前日期，则返回false
+                    return false;
+                }
                 long time = date.getTime();//返回当前日期对应的long类型的毫秒数
                 java.sql.Date date2 = new java.sql.Date(time);
                 ps.setDate(7, date2);
@@ -44,6 +47,9 @@ public class OrderDaoImpl implements OrderDao {
             ps.setString(12, postDemandVo.getDescription());
             String orderID = new Date().getTime() + (int) ((Math.random() * 9 + 1) * 100000) + "";
             ps.setString(13, orderID);
+            ps.setString(14, postDemandVo.getDesPlaceDetail());
+            ps.setString(15, postDemandVo.getStartPlaceDetail());
+//            System.out.println(postDemandVo);
             int result = ps.executeUpdate();
             if (result == 1) {
                 return true;
@@ -142,6 +148,8 @@ public class OrderDaoImpl implements OrderDao {
                 orderDetailVo.setDesPlaceProvince(resultSet.getString("des_place_province"));
                 orderDetailVo.setDesPlaceDistrict(resultSet.getString("des_place_district"));
                 orderDetailVo.setLength(String.valueOf(resultSet.getDouble("length")));
+                orderDetailVo.setDesPlaceDetail(resultSet.getString("des_place_detail"));
+                orderDetailVo.setStartPlaceDetail(resultSet.getString("start_place_detail"));
                 int i = resultSet.getInt("driver_id");
                 if (i != 0) {
                     sql = "select * from `user` where user_id = ?";
@@ -238,6 +246,168 @@ public class OrderDaoImpl implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public double findMinLengthByUserId(int userId) {
+        String sql = "select min(length) as min_length from `order` where owner_id = ? and state ='待接单'";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("min_length");
+            }
+            return 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public double findMinWeightByUserId(int userId) {
+        String sql = "select min(weight) as min_weight from `order` where owner_id = ? and state ='待接单'";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("min_weight");
+            }
+            return 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public List<DemandVo> findDemandByStateLenWei(String state, double len, double wei) {
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setDouble(2, len);
+            ps.setDouble(3, wei);
+            ResultSet resultSet = ps.executeQuery();
+            List<DemandVo> demandVoList = new ArrayList<>();
+            while (resultSet.next()) {
+                DemandVo demandVo = new DemandVo();
+                demandVo.setOrderID(resultSet.getString("order_id"));
+                demandVo.setDeliverTime(resultSet.getDate("deliver_time").toString());
+                demandVo.setDescription(resultSet.getString("description"));
+                demandVo.setPrice(resultSet.getInt("price"));
+                demandVo.setDesPlaceCity(resultSet.getString("des_place_city"));
+                demandVo.setState(resultSet.getString("state"));
+                Date date = new Date(resultSet.getTimestamp("order_time").getTime());
+                demandVo.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+                demandVo.setStartPlaceCity(resultSet.getString("start_place_city"));
+                demandVo.setWeight(resultSet.getDouble("weight"));
+                demandVoList.add(demandVo);
+            }
+            return demandVoList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<DemandVo> findDemandByStateLenWeiStart(String state, double len, double wei, String start) {
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and start_place_city = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setDouble(2, len);
+            ps.setDouble(3, wei);
+            ps.setString(4, start);
+            ResultSet resultSet = ps.executeQuery();
+            List<DemandVo> demandVoList = new ArrayList<>();
+            while (resultSet.next()) {
+                DemandVo demandVo = new DemandVo();
+                demandVo.setOrderID(resultSet.getString("order_id"));
+                demandVo.setDeliverTime(resultSet.getDate("deliver_time").toString());
+                demandVo.setDescription(resultSet.getString("description"));
+                demandVo.setPrice(resultSet.getInt("price"));
+                demandVo.setDesPlaceCity(resultSet.getString("des_place_city"));
+                demandVo.setState(resultSet.getString("state"));
+                Date date = new Date(resultSet.getTimestamp("order_time").getTime());
+                demandVo.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+                demandVo.setStartPlaceCity(resultSet.getString("start_place_city"));
+                demandVo.setWeight(resultSet.getDouble("weight"));
+                demandVoList.add(demandVo);
+            }
+            return demandVoList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<DemandVo> findDemandByStateLenWeiEnd(String state, double len, double wei, String end) {
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and des_place_city = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setDouble(2, len);
+            ps.setDouble(3, wei);
+            ps.setString(4, end);
+            ResultSet resultSet = ps.executeQuery();
+            List<DemandVo> demandVoList = new ArrayList<>();
+            while (resultSet.next()) {
+                DemandVo demandVo = new DemandVo();
+                demandVo.setOrderID(resultSet.getString("order_id"));
+                demandVo.setDeliverTime(resultSet.getDate("deliver_time").toString());
+                demandVo.setDescription(resultSet.getString("description"));
+                demandVo.setPrice(resultSet.getInt("price"));
+                demandVo.setDesPlaceCity(resultSet.getString("des_place_city"));
+                demandVo.setState(resultSet.getString("state"));
+                Date date = new Date(resultSet.getTimestamp("order_time").getTime());
+                demandVo.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+                demandVo.setStartPlaceCity(resultSet.getString("start_place_city"));
+                demandVo.setWeight(resultSet.getDouble("weight"));
+                demandVoList.add(demandVo);
+            }
+            return demandVoList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<DemandVo> findDemandByStateLenWeiStartEnd(String state, double len, double wei, String start, String end) {
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and start_place_city = ? and des_place_city = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setString(1, state);
+            ps.setDouble(2, len);
+            ps.setDouble(3, wei);
+            ps.setString(4, start);
+            ps.setString(5, end);
+            ResultSet resultSet = ps.executeQuery();
+            List<DemandVo> demandVoList = new ArrayList<>();
+            while (resultSet.next()) {
+                DemandVo demandVo = new DemandVo();
+                demandVo.setOrderID(resultSet.getString("order_id"));
+                demandVo.setDeliverTime(resultSet.getDate("deliver_time").toString());
+                demandVo.setDescription(resultSet.getString("description"));
+                demandVo.setPrice(resultSet.getInt("price"));
+                demandVo.setDesPlaceCity(resultSet.getString("des_place_city"));
+                demandVo.setState(resultSet.getString("state"));
+                Date date = new Date(resultSet.getTimestamp("order_time").getTime());
+                demandVo.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+                demandVo.setStartPlaceCity(resultSet.getString("start_place_city"));
+                demandVo.setWeight(resultSet.getDouble("weight"));
+                demandVoList.add(demandVo);
+            }
+            return demandVoList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

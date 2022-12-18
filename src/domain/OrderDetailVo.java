@@ -24,6 +24,8 @@ public class OrderDetailVo {
     private String startPlaceDistrict;
     private String desPlaceProvince;
     private String desPlaceDistrict;
+    private String startPlaceDetail;
+    private String desPlaceDetail;
 
     public OrderDetailVo() {
     }
@@ -209,6 +211,22 @@ public class OrderDetailVo {
                 ", desPlaceProvince='" + desPlaceProvince + '\'' +
                 ", desPlaceDistrict='" + desPlaceDistrict + '\'' +
                 '}';
+    }
+
+    public String getStartPlaceDetail() {
+        return startPlaceDetail;
+    }
+
+    public void setStartPlaceDetail(String startPlaceDetail) {
+        this.startPlaceDetail = startPlaceDetail;
+    }
+
+    public String getDesPlaceDetail() {
+        return desPlaceDetail;
+    }
+
+    public void setDesPlaceDetail(String desPlaceDetail) {
+        this.desPlaceDetail = desPlaceDetail;
     }
 
     public void setDesPlaceDistrict(String desPlaceDistrict) {

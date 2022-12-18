@@ -15,6 +15,8 @@ public class PostDemandVo {
     private String startPlaceDistrict;
     private String desPlaceProvince;
     private String desPlaceDistrict;
+    private String startPlaceDetail;
+    private String desPlaceDetail;
 
     public PostDemandVo() {
     }
@@ -125,9 +127,27 @@ public class PostDemandVo {
         this.ownerID = ownerID;
     }
 
+
+    public String getStartPlaceDetail() {
+        return startPlaceDetail;
+    }
+
+    public void setStartPlaceDetail(String startPlaceDetail) {
+        this.startPlaceDetail = startPlaceDetail;
+    }
+
+    public String getDesPlaceDetail() {
+        return desPlaceDetail;
+    }
+
+    public void setDesPlaceDetail(String desPlaceDetail) {
+        this.desPlaceDetail = desPlaceDetail;
+    }
+
     @Override
     public String toString() {
-        return "DemandVo{" +
+        return "PostDemandVo{" +
+                "ownerID=" + ownerID +
                 ", startPlaceCity='" + startPlaceCity + '\'' +
                 ", desPlaceCity='" + desPlaceCity + '\'' +
                 ", deliverTime='" + deliverTime + '\'' +
@@ -140,6 +160,8 @@ public class PostDemandVo {
                 ", startPlaceDistrict='" + startPlaceDistrict + '\'' +
                 ", desPlaceProvince='" + desPlaceProvince + '\'' +
                 ", desPlaceDistrict='" + desPlaceDistrict + '\'' +
+                ", startPlaceDetail='" + startPlaceDetail + '\'' +
+                ", desPlaceDetail='" + desPlaceDetail + '\'' +
                 '}';
     }
 }

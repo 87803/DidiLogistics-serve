@@ -12,6 +12,7 @@ public class User {
     private boolean state;
     private Double carLength;
     private Double carWeight;
+    private int income;
 
     public User() {
     }
@@ -119,5 +120,13 @@ public class User {
                 ", carLength=" + carLength +
                 ", carWeight=" + carWeight +
                 '}';
+    }
+
+    public int getIncome() {
+        return income;
+    }
+
+    public void setIncome(int income) {
+        this.income = income;
     }
 }
