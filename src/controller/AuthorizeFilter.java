@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 // 对于所有需要登录的Api，进行过滤
-@WebFilter(filterName = "AuthorizeFilter", urlPatterns = "/auth2/*")
+@WebFilter(filterName = "AuthorizeFilter", urlPatterns = "/auth/*")
 public class AuthorizeFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {

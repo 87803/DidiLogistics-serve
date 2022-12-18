@@ -30,6 +30,6 @@ public class DriverServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-
+        doGet(request, response);
     }
 }
