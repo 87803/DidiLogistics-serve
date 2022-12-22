@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 18/12/2022 23:26:43
+ Date: 22/12/2022 17:49:08
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `driver`  (
 -- ----------------------------
 -- Records of driver
 -- ----------------------------
-INSERT INTO `driver` VALUES (4, '呼和浩特市', '长春市', b'1', 6, 900, 5000);
+INSERT INTO `driver` VALUES (4, '呼和浩特市', '长春市', b'1', 6, 900, 11000);
 INSERT INTO `driver` VALUES (9, '北京市', '太原市', b'1', 12, 900, 5000);
 INSERT INTO `driver` VALUES (10, '北京市', '石家庄市', b'1', 5, 600, 0);
 
@@ -55,7 +55,7 @@ CREATE TABLE `message`  (
   INDEX `order`(`order_id` ASC) USING BTREE,
   CONSTRAINT `order` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of message
@@ -93,6 +93,14 @@ INSERT INTO `message` VALUES (44, '1671349768883', 4, '订单已完成支付，2
 INSERT INTO `message` VALUES (45, '1671371110800', 3, '司机 老六 完成了接单，快去看看吧', '2022-12-18 22:30:43');
 INSERT INTO `message` VALUES (47, '1671371110800', 3, '您 操作了取消订单', '2022-12-18 22:30:49');
 INSERT INTO `message` VALUES (48, '1671371110800', 4, '货主 操作了取消订单', '2022-12-18 22:30:49');
+INSERT INTO `message` VALUES (49, '1671418806135', 3, '司机 老六 完成了接单，快去看看吧', '2022-12-19 10:52:43');
+INSERT INTO `message` VALUES (51, '1671418806135', 3, '订单已完成发货，货物即将启程，请耐心等待', '2022-12-19 10:52:52');
+INSERT INTO `message` VALUES (52, '1671418806135', 4, '您已完成发货，货物描述：苹果，即将送往：广东省广州市天河区', '2022-12-19 10:52:52');
+INSERT INTO `message` VALUES (53, '1671418806135', 3, '订单已完成，请尽快完成支付', '2022-12-19 10:53:05');
+INSERT INTO `message` VALUES (54, '1671418806135', 4, '订单已完成，系统已通知货主进行支付', '2022-12-19 10:53:05');
+INSERT INTO `message` VALUES (55, '1671418806135', 3, '订单已完成支付，感谢您的使用', '2022-12-19 10:53:39');
+INSERT INTO `message` VALUES (56, '1671418806135', 4, '订单已完成支付，3000元已入账，感谢您的使用', '2022-12-19 10:53:39');
+INSERT INTO `message` VALUES (57, '1671516161639', 3, '司机 老六 完成了接单，快去看看吧', '2022-12-20 13:48:38');
 
 -- ----------------------------
 -- Table structure for order
@@ -117,6 +125,8 @@ CREATE TABLE `order`  (
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '货物描述',
   `start_place_detail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `des_place_detail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `distance` double NULL DEFAULT NULL COMMENT '起终点距离，单位公里',
+  `recommend_price` double NULL DEFAULT NULL COMMENT '系统建议最低价格',
   PRIMARY KEY (`order_id`) USING BTREE,
   INDEX `owner`(`owner_id` ASC) USING BTREE,
   INDEX `driver`(`driver_id` ASC) USING BTREE,
@@ -127,20 +137,22 @@ CREATE TABLE `order`  (
 -- ----------------------------
 -- Records of order
 -- ----------------------------
-INSERT INTO `order` VALUES ('1670917216767', '2022-12-13 15:31:06', '北京市', '北京市', '房山区', '湖南省', '长沙市', '雨花区', '2022-10-23', 1.5, 200, 5000, 2, NULL, '已取消', '电脑', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1670999606959', '2022-12-14 14:20:20', '福建省', '福州市', '鼓楼区', '黑龙江省', '哈尔滨市', '道里区', '2022-12-30', 2, 300, 3888, 3, NULL, '已取消', 'sofa', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671089087058', '2022-12-15 15:12:00', '上海市', '上海市', '黄浦区', '辽宁省', '沈阳市', '和平区', '2022-12-17', 6, 1000, 3000, 3, NULL, '已取消', '一箱苹果', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671094115363', '2022-12-15 16:34:29', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-31', 2, 2, 100, 3, NULL, '已取消', '电脑', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671099755771', '2022-12-15 18:19:57', '青海省', '西宁市', '城东区', '安徽省', '合肥市', '瑶海区', '2022-12-17', 6, 500, 3000, 3, 4, '已完成', '橘子', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671107920450', '2022-12-15 20:26:14', '辽宁省', '沈阳市', '和平区', '青海省', '西宁市', '城东区', '2022-12-30', 3, 700, 6000, 3, 9, '已接单', 'computer', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671108168609', '2022-12-15 20:30:19', '河北省', '石家庄市', '长安区', '新疆维吾尔自治区', '乌鲁木齐市', '天山区', '2022-12-23', 6, 300, 5000, 3, 9, '已完成', 'phone', '翻斗花园二号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671349768883', '2022-12-18 15:38:11', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-21', 2, 280, 2000, 3, 4, '已完成', '茶几', '翻斗花园2号楼', '恒大未来城西区');
-INSERT INTO `order` VALUES ('1671371110800', '2022-12-18 21:33:00', '河北省', '石家庄市', '长安区', '广东省', '广州市', '天河区', '2022-12-28', 2, 300, 3000, 3, 4, '已取消', '沙发', '翻斗花园二号楼', '恒大绿洲1栋');
-INSERT INTO `order` VALUES ('1671374594730', '2022-12-18 22:33:37', '山西省', '太原市', '小店区', '黑龙江省', '哈尔滨市', '道里区', '2022-12-28', 2, 200, 3000, 2, NULL, '待接单', '抗疫物资', '翻斗花园', '恒大');
-INSERT INTO `order` VALUES ('1671374628126', '2022-12-18 22:32:46', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-29', 2, 300, 2000, 2, NULL, '待接单', '窗帘', '翻斗花园', '恒大');
-INSERT INTO `order` VALUES ('1671374642548', '2022-12-18 22:35:50', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-22', 5, 600, 9999, 5, NULL, '待接单', 'N95口罩（急送）', '翻斗花园', '恒大');
-INSERT INTO `order` VALUES ('1671374729693', '2022-12-18 22:34:12', '北京市', '北京市', '海淀区', '辽宁省', '沈阳市', '和平区', '2022-12-28', 5, 600, 6000, 2, NULL, '待接单', '口罩', '翻斗花园', '恒大');
-INSERT INTO `order` VALUES ('1671375002608', '2022-12-18 22:34:59', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-28', 6, 700, 6000, 5, NULL, '待接单', '医用防护服', '翻斗花园', '恒大');
+INSERT INTO `order` VALUES ('1670917216767', '2022-12-13 15:31:06', '北京市', '北京市', '房山区', '湖南省', '长沙市', '雨花区', '2022-10-23', 1.5, 200, 5000, 2, NULL, '已取消', '电脑', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1670999606959', '2022-12-14 14:20:20', '福建省', '福州市', '鼓楼区', '黑龙江省', '哈尔滨市', '道里区', '2022-12-30', 2, 300, 3888, 3, NULL, '已取消', 'sofa', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671089087058', '2022-12-15 15:12:00', '上海市', '上海市', '黄浦区', '辽宁省', '沈阳市', '和平区', '2022-12-17', 6, 1000, 3000, 3, NULL, '已取消', '一箱苹果', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671094115363', '2022-12-15 16:34:29', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-31', 2, 2, 100, 3, NULL, '已取消', '电脑', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671099755771', '2022-12-15 18:19:57', '青海省', '西宁市', '城东区', '安徽省', '合肥市', '瑶海区', '2022-12-17', 6, 500, 3000, 3, 4, '已完成', '橘子', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671107920450', '2022-12-15 20:26:14', '辽宁省', '沈阳市', '和平区', '青海省', '西宁市', '城东区', '2022-12-30', 3, 700, 6000, 3, 9, '已接单', 'computer', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671108168609', '2022-12-15 20:30:19', '河北省', '石家庄市', '长安区', '新疆维吾尔自治区', '乌鲁木齐市', '天山区', '2022-12-23', 6, 300, 5000, 3, 9, '已完成', 'phone', '翻斗花园二号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671349768883', '2022-12-18 15:38:11', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-21', 2, 280, 2000, 3, 4, '已完成', '茶几', '翻斗花园2号楼', '恒大未来城西区', NULL, NULL);
+INSERT INTO `order` VALUES ('1671371110800', '2022-12-18 21:33:00', '河北省', '石家庄市', '长安区', '广东省', '广州市', '天河区', '2022-12-28', 2, 300, 3000, 3, 4, '已取消', '沙发', '翻斗花园二号楼', '恒大绿洲1栋', NULL, NULL);
+INSERT INTO `order` VALUES ('1671374594730', '2022-12-18 22:33:37', '山西省', '太原市', '小店区', '黑龙江省', '哈尔滨市', '道里区', '2022-12-28', 2, 200, 3000, 2, NULL, '待接单', '抗疫物资', '翻斗花园', '恒大', NULL, NULL);
+INSERT INTO `order` VALUES ('1671374628126', '2022-12-18 22:32:46', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-29', 2, 300, 2000, 2, NULL, '待接单', '窗帘', '翻斗花园', '恒大', NULL, NULL);
+INSERT INTO `order` VALUES ('1671374642548', '2022-12-18 22:35:50', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-22', 5, 600, 9999, 5, NULL, '待接单', 'N95口罩（急送）', '翻斗花园', '恒大', NULL, NULL);
+INSERT INTO `order` VALUES ('1671374729693', '2022-12-18 22:34:12', '北京市', '北京市', '海淀区', '辽宁省', '沈阳市', '和平区', '2022-12-28', 5, 600, 6000, 2, NULL, '待接单', '口罩', '翻斗花园', '恒大', NULL, NULL);
+INSERT INTO `order` VALUES ('1671375002608', '2022-12-18 22:34:59', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-28', 6, 700, 6000, 5, NULL, '待接单', '医用防护服', '翻斗花园', '恒大', NULL, NULL);
+INSERT INTO `order` VALUES ('1671418806135', '2022-12-19 10:50:32', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-28', 3, 300, 3000, 3, 4, '已完成', '苹果', '翻斗花园', '恒大绿洲', NULL, NULL);
+INSERT INTO `order` VALUES ('1671516161639', '2022-12-20 13:48:27', '北京市', '北京市', '海淀区', '广东省', '广州市', '天河区', '2022-12-23', 3, 300, 3000, 3, 4, '已接单', '新年礼包', '恒大', '碧桂园', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for user
@@ -154,29 +166,17 @@ CREATE TABLE `user`  (
   `type` bit(1) NOT NULL DEFAULT b'0' COMMENT '用户类型，0表示货主，1表示司机',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户手机号',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (2, '', '张三', '25D55AD283AA400AF464C76D713C07AD', b'0', '15622335566');
-INSERT INTO `user` VALUES (3, NULL, '老六', '25D55AD283AA400AF464C76D713C07AD', b'0', '17855667788');
+INSERT INTO `user` VALUES (3, NULL, '小明', '25D55AD283AA400AF464C76D713C07AD', b'0', '17855667788');
 INSERT INTO `user` VALUES (4, NULL, '李四', '25D55AD283AA400AF464C76D713C07AD', b'1', '16755556666');
-INSERT INTO `user` VALUES (5, NULL, '王七', '25D55AD283AA400AF464C76D713C07AD', b'0', '13322226666');
+INSERT INTO `user` VALUES (5, NULL, '康康', '25D55AD283AA400AF464C76D713C07AD', b'0', '13322226666');
 INSERT INTO `user` VALUES (9, NULL, '王五', '25D55AD283AA400AF464C76D713C07AD', b'1', '18911112222');
 INSERT INTO `user` VALUES (10, NULL, '王麻子', '25D55AD283AA400AF464C76D713C07AD', b'1', '18955552211');
-
--- ----------------------------
--- Event structure for check_order
--- ----------------------------
-DROP EVENT IF EXISTS `check_order`;
-delimiter ;;
-CREATE EVENT `check_order`
-ON SCHEDULE
-EVERY '1' DAY STARTS '2022-12-13 20:00:00'
-DO UPDATE `order` SET state = '已取消' WHERE state = '待接单' AND deliver_time < CURRENT_DATE
-;;
-delimiter ;
 
 -- ----------------------------
 -- Triggers structure for table user
