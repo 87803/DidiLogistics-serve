@@ -2,6 +2,7 @@ package controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import domain.OrderDetailVo;
 import service.OrderService;
 import service.impl.OrderServiceImpl;
 import util.JWTUtils;
@@ -23,7 +24,15 @@ public class OrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             String orderID = request.getParameter("orderID");
-            ResponseUtils.responseJson(200, "获取订单成功", orderService.getOrderDetail(orderID), response);
+            String token = request.getHeader("token");
+            DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
+            boolean userType = decodedJWT.getClaim("type").asString().equals("1");
+            OrderDetailVo orderDetailVo = orderService.getOrderDetail(orderID);
+            if (userType && orderDetailVo.getState().equals("待接单")) {
+                orderDetailVo.setDesPlaceDetail("******");
+                orderDetailVo.setStartPlaceDetail("******");
+            }
+            ResponseUtils.responseJson(200, "获取订单成功", orderDetailVo, response);
         } catch (Exception e) {
             ResponseUtils.responseJson(400, "获取订单详情失败", response);
         }
@@ -77,6 +86,11 @@ public class OrderServlet extends HttpServlet {
                 else
                     ResponseUtils.responseJson(400, "推送订单失败", response);
                 break;
+            case 6://修改价格
+                if (orderService.updatePrice(orderID, Integer.parseInt(userID), postData.getInteger("price")))
+                    ResponseUtils.responseJson(200, "修改价格成功", response);
+                else
+                    ResponseUtils.responseJson(400, "修改价格失败", response);
             default:
                 ResponseUtils.responseJson(500, "参数错误，非法的请求", response);
         }

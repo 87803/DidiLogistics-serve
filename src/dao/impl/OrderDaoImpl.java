@@ -19,7 +19,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public boolean insertNewOrder(PostDemandVo postDemandVo) {
         String sql = "INSERT INTO `order`(`start_place_province`, `start_place_city`, `start_place_district`,`des_place_province`," +
-                "`des_place_city`,`des_place_district`,`deliver_time`,`length`,`weight`,`price`,`owner_id`,`description`, `order_id`, `des_place_detail`, `start_place_detail`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "`des_place_city`,`des_place_district`,`deliver_time`,`length`,`weight`,`price`,`owner_id`,`description`, `order_id`, `des_place_detail`, `start_place_detail`, `distance`, `recommend_price`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setString(1, postDemandVo.getStartPlaceProvince());
@@ -49,6 +49,8 @@ public class OrderDaoImpl implements OrderDao {
             ps.setString(13, orderID);
             ps.setString(14, postDemandVo.getDesPlaceDetail());
             ps.setString(15, postDemandVo.getStartPlaceDetail());
+            ps.setDouble(16, postDemandVo.getDistance());
+            ps.setDouble(17, postDemandVo.getRecommendPrice());
 //            System.out.println(postDemandVo);
             int result = ps.executeUpdate();
             if (result == 1) {
@@ -150,6 +152,8 @@ public class OrderDaoImpl implements OrderDao {
                 orderDetailVo.setLength(String.valueOf(resultSet.getDouble("length")));
                 orderDetailVo.setDesPlaceDetail(resultSet.getString("des_place_detail"));
                 orderDetailVo.setStartPlaceDetail(resultSet.getString("start_place_detail"));
+                orderDetailVo.setDistance(String.valueOf(resultSet.getDouble("distance")));
+                orderDetailVo.setRecommendPrice(String.valueOf(resultSet.getInt("recommend_price")));
                 int i = resultSet.getInt("driver_id");
                 if (i != 0) {
                     sql = "select * from `user` where user_id = ?";
@@ -285,7 +289,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<DemandVo> findDemandByStateLenWei(String state, double len, double wei) {
-        String sql = "select * from `order` where state = ? and length <= ? and weight <= ?";
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? order by order_time desc";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setString(1, state);
@@ -316,7 +320,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<DemandVo> findDemandByStateLenWeiStart(String state, double len, double wei, String start) {
-        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and start_place_city = ?";
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and start_place_city = ? order by order_time desc";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setString(1, state);
@@ -348,7 +352,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<DemandVo> findDemandByStateLenWeiEnd(String state, double len, double wei, String end) {
-        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and des_place_city = ?";
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and des_place_city = ? order by order_time desc";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setString(1, state);
@@ -380,7 +384,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<DemandVo> findDemandByStateLenWeiStartEnd(String state, double len, double wei, String start, String end) {
-        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and start_place_city = ? and des_place_city = ?";
+        String sql = "select * from `order` where state = ? and length <= ? and weight <= ? and start_place_city = ? and des_place_city = ? order by order_time desc";
         try {
             PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
             ps.setString(1, state);
@@ -408,6 +412,26 @@ public class OrderDaoImpl implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public boolean updatePriceByOrderIDAndUserID(String orderId, int userId, int price) {
+        String sql = "update `order` set price = ? where order_id = ? and owner_id = ?";
+        try {
+            PreparedStatement ps = JdbcUtils.conn.prepareStatement(sql);
+            ps.setInt(1, price);
+            ps.setString(2, orderId);
+            ps.setInt(3, userId);
+            int i = ps.executeUpdate();
+            if (i == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

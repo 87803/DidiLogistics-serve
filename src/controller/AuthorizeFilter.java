@@ -19,19 +19,15 @@ public class AuthorizeFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
-        System.out.println("认证过滤器");
         try {
-//            JSONObject data = JsonUtils.getRequestPostJson((HttpServletRequest) servletRequest);
             String token = ((HttpServletRequest) servletRequest).getHeader("token");
             DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
-            System.out.println(decodedJWT.getClaim("name").asString());
-            System.out.println(decodedJWT.getClaim("code").asString());
-            System.out.println("用户已登录，放行");
+            System.out.println("认证过滤器：用户已登录，放行");
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             System.out.println("解析失败");
             System.out.println(e.getMessage());
-            System.out.println("用户未登录，拒绝访问");
+            System.out.println("认证过滤器：用户未登录，拒绝访问");
             ResponseUtils.responseJson(405, "用户未登录或没有权限访问该功能", (HttpServletResponse) servletResponse);
         }
     }

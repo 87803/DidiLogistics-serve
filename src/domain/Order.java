@@ -20,6 +20,8 @@ public class Order {
     private String startPlaceDistrict;
     private String desPlaceProvince;
     private String desPlaceDistrict;
+    private Double distance;
+    private Double recommendPrice;
 
     public Order() {
     }
@@ -150,5 +152,21 @@ public class Order {
 
     public void setDesPlaceDistrict(String desPlaceDistrict) {
         this.desPlaceDistrict = desPlaceDistrict;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public Double getRecommendPrice() {
+        return recommendPrice;
+    }
+
+    public void setRecommendPrice(Double recommendPrice) {
+        this.recommendPrice = recommendPrice;
     }
 }

@@ -15,7 +15,7 @@ public class EmailUtils {
 
     static {
         InputStream inputStream = EmailUtils.class.getClassLoader().getResourceAsStream("config/email.properties");
-        System.out.println(inputStream);
+//        System.out.println(inputStream);
         Properties properties = new Properties();
         //从输入字节流读取属性列表（键和元素对）
         try {
@@ -38,7 +38,7 @@ public class EmailUtils {
         props.setProperty("mail.smtp.starttls.Enable", "true");
         // 创建Session实例对象
         Session session = Session.getInstance(props);
-        session.setDebug(true);
+//        session.setDebug(true);
 
         try {
             // 3. 创建一封邮件

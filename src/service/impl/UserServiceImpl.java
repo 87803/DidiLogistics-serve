@@ -6,6 +6,7 @@ import dao.impl.DriverDaoImpl;
 import dao.impl.UserDaoImpl;
 import domain.User;
 import service.UserService;
+import util.EmailUtils;
 import util.RedisUtils;
 
 public class UserServiceImpl implements UserService {
@@ -23,10 +24,17 @@ public class UserServiceImpl implements UserService {
         System.out.println("sending");
         //对字符串的操作
         //存储一个值
-        if (!RedisUtils.set(phone, code))
-            return false;
-        System.out.println("验证码已发送，phone: " + phone + ", code: " + code);
-        return true;
+        try {
+            if (!RedisUtils.set(phone, code))
+                return false;
+            System.out.println("验证码已发送，phone: " + phone + ", code: " + code);
+            EmailUtils.sendEmail(phone, code, "");
+            return true;
+        } catch (Exception e) {
+            System.out.println("未能连接到Redis，" + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override

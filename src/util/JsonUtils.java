@@ -21,6 +21,7 @@ public class JsonUtils {
 
     public static JSONObject getRequestPostJson(HttpServletRequest request) throws IOException {
         String jsonStr = getRequestPostStr(request);
+        System.out.println("接收到的json数据：" + jsonStr);
         return JSONObject.parseObject(jsonStr);
     }
 

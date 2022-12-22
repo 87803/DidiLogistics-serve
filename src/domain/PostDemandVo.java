@@ -17,6 +17,8 @@ public class PostDemandVo {
     private String desPlaceDistrict;
     private String startPlaceDetail;
     private String desPlaceDetail;
+    private Double distance;
+    private Double recommendPrice;
 
     public PostDemandVo() {
     }
@@ -163,5 +165,21 @@ public class PostDemandVo {
                 ", startPlaceDetail='" + startPlaceDetail + '\'' +
                 ", desPlaceDetail='" + desPlaceDetail + '\'' +
                 '}';
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public Double getRecommendPrice() {
+        return recommendPrice;
+    }
+
+    public void setRecommendPrice(Double recommendPrice) {
+        this.recommendPrice = recommendPrice;
     }
 }

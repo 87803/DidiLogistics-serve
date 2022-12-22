@@ -72,6 +72,7 @@ public class OrderServiceImpl implements OrderService {
             if (orderDao.updateOrderStateAndDriverByUser(orderId, ownerId, userId, state)) {
                 ownerMessage = MessageFormat.format(MessageEnum.TAKING_ORDER, orderDetailVo.getOwnerName());
                 driverMessage = MessageEnum.TAKING_ORDER_DRIVER;
+                driverId = userId;
                 opResult = true;
             }
         } else if (state.equals("进行中") && curState.equals("已接单") && userType) {//开始行程
@@ -97,7 +98,8 @@ public class OrderServiceImpl implements OrderService {
 
         if (opResult) {
             messageService.createNewMessage(ownerId, orderId, ownerMessage);
-            messageService.createNewMessage(driverId, orderId, driverMessage);
+            if (driverId != 0)
+                messageService.createNewMessage(driverId, orderId, driverMessage);
             return true;
         }
         return false;
@@ -134,5 +136,10 @@ public class OrderServiceImpl implements OrderService {
         } else {
             return orderDao.findDemandByStateLenWeiStartEnd("待接单", len, wei, start, end);
         }
+    }
+
+    @Override
+    public boolean updatePrice(String orderId, int userId, int price) {
+        return orderDao.updatePriceByOrderIDAndUserID(orderId, userId, price);
     }
 }

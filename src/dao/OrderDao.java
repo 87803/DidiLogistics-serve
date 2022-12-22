@@ -37,4 +37,6 @@ public interface OrderDao {
     List<DemandVo> findDemandByStateLenWeiEnd(String state, double len, double wei, String end);
 
     List<DemandVo> findDemandByStateLenWeiStartEnd(String state, double len, double wei, String start, String end);
+
+    boolean updatePriceByOrderIDAndUserID(String orderId, int userId, int price);
 }
