@@ -2,6 +2,7 @@ package domain;
 
 import java.util.Date;
 
+//消息
 public class Message {
     int messageID;
     String orderID;

@@ -1,5 +1,6 @@
 package domain;
 
+//用于展示司机列表的信息，只含有司机的基本信息
 public class DriverVo {
     private String name;
     private int userID;
