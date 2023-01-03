@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//用于注册
 @WebServlet(name = "RegisterServlet", value = "/register")
 public class RegisterServlet extends HttpServlet {
     UserService userService = new UserServiceImpl();
@@ -29,14 +30,14 @@ public class RegisterServlet extends HttpServlet {
         String password = jsonData.getString("password");
         String code = jsonData.getString("code");
         Boolean type = jsonData.getBoolean("type");
-        if (RedisUtils.verify(phone, code)) {
+        if (RedisUtils.verify(phone, code)) {//验证码正确
             if (userService.register(phone, password, type))
                 ResponseUtils.responseJson(200, "注册成功", response);
             else {   //注册失败
                 ResponseUtils.responseJson(400, "注册失败，可能是当前用户已存在，请重试", response);
                 System.out.println("注册失败");
             }
-        } else {
+        } else {    //验证码错误
             ResponseUtils.responseJson(400, "验证码错误", response);
             System.out.println("验证码错误");
         }

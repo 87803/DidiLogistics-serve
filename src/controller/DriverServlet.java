@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+//用于货主获取司机列表
 @WebServlet(name = "DriverServlet", value = "/auth/driver")
 public class DriverServlet extends HttpServlet {
     DriverService driverService = new DriverServiceImpl();
@@ -21,6 +22,7 @@ public class DriverServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("token");
         DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
+        //得到用户筛选的起点和终点条件
         String start = request.getParameter("start");
         String end = request.getParameter("end");
         int userID = Integer.parseInt(decodedJWT.getClaim("userID").asString());

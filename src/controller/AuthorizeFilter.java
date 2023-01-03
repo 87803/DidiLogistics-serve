@@ -20,9 +20,10 @@ public class AuthorizeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
         try {
+            //解析Token
             String token = ((HttpServletRequest) servletRequest).getHeader("token");
             DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
-            System.out.println("认证过滤器：用户已登录，放行");
+            System.out.println("认证过滤器：用户已登录，放行，用户ID为" + decodedJWT.getClaim("userID").asString());
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             System.out.println("解析失败");

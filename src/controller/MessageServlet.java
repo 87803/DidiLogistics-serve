@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+//用于获取消息列表
 @WebServlet(name = "MessageServlet", value = "/auth/message")
 public class MessageServlet extends HttpServlet {
     MessageService messageService = new MessageServiceImpl();
@@ -24,7 +25,6 @@ public class MessageServlet extends HttpServlet {
         String userID = decodedJWT.getClaim("userID").asString();
         List<MessageVo> data = messageService.getMessageByUserId(Integer.parseInt(userID));
         ResponseUtils.responseJson(200, "获取订单列表成功", data, response);
-
     }
 
     @Override

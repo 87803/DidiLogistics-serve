@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//用于获取订单详情，对订单进行操作
 @WebServlet(name = "OrderServlet", value = "/auth/order")
 public class OrderServlet extends HttpServlet {
     private final OrderService orderService = new OrderServiceImpl();
@@ -28,6 +29,7 @@ public class OrderServlet extends HttpServlet {
             DecodedJWT decodedJWT = JWTUtils.decodeRsa(token);
             boolean userType = decodedJWT.getClaim("type").asString().equals("1");
             OrderDetailVo orderDetailVo = orderService.getOrderDetail(orderID);
+            //如果是司机且“待接单”，则隐去详细地址
             if (userType && orderDetailVo.getState().equals("待接单")) {
                 orderDetailVo.setDesPlaceDetail("******");
                 orderDetailVo.setStartPlaceDetail("******");
@@ -38,6 +40,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    //对订单进行操作
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = request.getHeader("token");
@@ -48,6 +51,7 @@ public class OrderServlet extends HttpServlet {
         JSONObject postData = JsonUtils.getRequestPostJson(request);
         String orderID = postData.getString("orderID");
         int type = postData.getInteger("type");
+        //根据不同的操作类型返回不同的结果
         switch (type) {
             case 0: //支付
                 if (orderService.updateOrderState(orderID, Integer.parseInt(userID), "已完成", userType)) {

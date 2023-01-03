@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+//用于登录
 @WebServlet(name = "LoginServlet", value = "/login")
 public class LoginServlet extends HttpServlet {
     UserService userService = new UserServiceImpl();
@@ -31,7 +32,7 @@ public class LoginServlet extends HttpServlet {
         String phone = jsonData.getString("phone");
         String password = jsonData.getString("password");
         User user = userService.login(phone, password);
-        if (user != null) {
+        if (user != null) {//登录成功
             // 生成token
             Map<String, String> map = new HashMap<>();
             map.put("phone", phone);

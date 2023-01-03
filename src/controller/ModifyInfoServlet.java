@@ -16,10 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//用于获取用户信息，修改用户信息
 @WebServlet(name = "ModifyInfoServlet", value = "/auth/modifyInfo")
 public class ModifyInfoServlet extends HttpServlet {
     UserService userService = new UserServiceImpl();
 
+    //获取用户信息
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("token");
@@ -29,6 +31,7 @@ public class ModifyInfoServlet extends HttpServlet {
         ResponseUtils.responseJson(200, "获取用户信息成功", user, response);
     }
 
+    //修改用户信息
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = request.getHeader("token");
@@ -38,8 +41,9 @@ public class ModifyInfoServlet extends HttpServlet {
         JSONObject data = JsonUtils.getRequestPostJson(request);
         User user = JSON.toJavaObject(data, User.class);
         user.setUserID(Integer.parseInt(userID));
-        System.out.println(data);
-        System.out.println(user);
+        //System.out.println(data);
+        //System.out.println(user);
+        //判断用户是否要修改密码
         if (data.getString("oldPassword") != null && !data.getString("oldPassword").equals("")) {
             if (!userService.updatePassword(Integer.parseInt(userID), data.getString("oldPassword"), data.getString("newPassword"))) {
                 ResponseUtils.responseJson(400, "修改密码失败", response);
