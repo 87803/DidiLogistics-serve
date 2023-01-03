@@ -14,10 +14,13 @@ public class DriverServiceImpl implements DriverService {
     OrderDao orderDao = new OrderDaoImpl();
 
 
+    //根据筛选条件获取在线司机列表
     @Override
     public List<DriverVo> getOnlineDriverByUserIDStartEnd(int userID, String start, String end) {
+        //获取货主需求中的最小货物长度和重量
         double len = orderDao.findMinLengthByUserId(userID);
         double wei = orderDao.findMinWeightByUserId(userID);
+        //判断用户是否筛选了起点和终点，调用不同的方法
         if (start.equals("null") && end.equals("null")) {
             return driverDao.findDriverByStateLenWei(true, len, wei);
         } else if (start.equals("null")) {

@@ -23,26 +23,31 @@ public class OrderServiceImpl implements OrderService {
     DriverDao driverDao = new DriverDaoImpl();
     MessageService messageService = new MessageServiceImpl();
 
+    //创建订单，用户发布需求
     @Override
     public boolean createOrder(PostDemandVo postDemandVo) {
         return orderDao.insertNewOrder(postDemandVo);
     }
 
+    //根据用户id查询订单
     @Override
     public List<DemandVo> getAllOrder(int userId, boolean userType) {
         return orderDao.findDemandByUserId(userId, userType);
     }
 
+    //根据订单状态查询订单
     @Override
     public List<DemandVo> getOrderByState(String state) {
         return orderDao.findDemandByState(state);
     }
 
+    //根据订单id查询订单详情
     @Override
     public OrderDetailVo getOrderDetail(String orderId) {
         return orderDao.findOrderDetailByOrderId(orderId);
     }
 
+    //更新订单状态，用户订单操作
     @Override
     public boolean updateOrderState(String orderId, int userId, String state, boolean userType) {
         OrderDetailVo orderDetailVo = orderDao.findOrderDetailByOrderId(orderId);
@@ -50,8 +55,9 @@ public class OrderServiceImpl implements OrderService {
         int driverId = Integer.parseInt(orderDetailVo.getDriverID() != null ? orderDetailVo.getDriverID() : "0");
         int ownerId = Integer.parseInt(orderDetailVo.getOwnerID());
         boolean opResult = false;
-        String ownerMessage = "";
-        String driverMessage = "";
+        String ownerMessage = "";   //货主端要显示的消息
+        String driverMessage = "";  //司机端要显示的消息
+        //订单当前状态，要执行的操作，操作用户三者均需合法，才能执行操作
         if (state.equals("已取消") && ((userType && driverId == userId) || (!userType && ownerId == userId))) {//取消订单，判断是否为该用户的订单
             if (curState.equals("待接单") || curState.equals("已接单")) { // 只有待接单和已接单的订单可以取消
                 if (!userType) {
@@ -98,13 +104,14 @@ public class OrderServiceImpl implements OrderService {
 
         if (opResult) {
             messageService.createNewMessage(ownerId, orderId, ownerMessage);
-            if (driverId != 0)
+            if (driverId != 0)  //如果司机id不为0，说明有司机接单，需要给司机发送消息
                 messageService.createNewMessage(driverId, orderId, driverMessage);
             return true;
         }
         return false;
     }
 
+    //向司机推送订单
     @Override
     public boolean pushOrder(String orderId, int driverId) {
         OrderDetailVo orderDetailVo = orderDao.findOrderDetailByOrderId(orderId);
@@ -117,16 +124,17 @@ public class OrderServiceImpl implements OrderService {
             messageService.createNewMessage(Integer.parseInt(orderDetailVo.getOwnerID()), orderId, MessageFormat.format(MessageEnum.PUSH_ORDER, driver.getName()));
             return true;
         }
-
         return false;
     }
 
+    //根据起终点筛选订单列表
     @Override
     public List<DemandVo> getOrderByUserIDStartEnd(int userID, String start, String end) {
         User user = userDao.findUserByID(userID);
-
+        //获取司机的货车长度和载重
         double len = user.getCarLength();
         double wei = user.getCarWeight();
+        //判断用户是否筛选了起点和终点，调用不同的方法
         if (start.equals("null") && end.equals("null")) {
             return orderDao.findDemandByStateLenWei("待接单", len, wei);
         } else if (start.equals("null")) {
@@ -138,6 +146,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    //修改订单价格
     @Override
     public boolean updatePrice(String orderId, int userId, int price) {
         return orderDao.updatePriceByOrderIDAndUserID(orderId, userId, price);
