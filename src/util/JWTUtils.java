@@ -12,7 +12,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Map;
 
-
+//JWT工具类，用于生成和验证JWT
 public class JWTUtils {
     private static final String RSA_PRIVATE_KEY = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAnuooK5AyLhPKuQRb" +
             "dYauKHlRVj8BQ6Uj/2xT30DuZbPZasIT2DKo5ftL6sr7AIJA0t1A68Gy8H4Tail7" +

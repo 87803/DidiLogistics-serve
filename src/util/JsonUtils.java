@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+//JSON工具类，用于将请求内容转换为JSON对象
 public class JsonUtils {
     /**
      * 获取Request中的JSON字符串

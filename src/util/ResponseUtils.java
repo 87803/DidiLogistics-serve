@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+//相应工具类，封装响应数据内容，用于统一响应格式，设置响应头
 public class ResponseUtils {
     public static void responseJson(int code, String msg, Object data, HttpServletResponse resp) {
         JSONObject jsonObject = new JSONObject();

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
+//邮件发送工具类，用于通过邮箱发送验证码
 public class EmailUtils {
     private static final String myEmailAccount;
     private static final String myEmailPassword;

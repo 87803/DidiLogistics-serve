@@ -2,6 +2,7 @@ package util;
 
 import redis.clients.jedis.Jedis;
 
+// Redis工具类，用于保存和验证验证码
 public class RedisUtils {
     private static final Jedis jedis = new Jedis("localhost", 6379);
 

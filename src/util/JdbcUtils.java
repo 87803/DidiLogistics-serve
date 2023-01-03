@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+//数据库连接工具类
 public class JdbcUtils {
     private static final String url;// 连接数据库的驱动
     private static final String driver;
